@@ -32,7 +32,7 @@ p {
           <p>${vo.title }</p>
         </div>
       </a>
-    </div>
+    </div> 
   </div>
  </c:forEach>
  <div style="height: 10px"></div>
