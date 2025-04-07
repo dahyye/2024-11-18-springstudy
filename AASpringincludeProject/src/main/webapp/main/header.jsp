@@ -18,8 +18,8 @@
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">상품(GOODS)
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="#">상품 목록</a></li>
-          <li><a href="#">상품 검색</a></li>
+          <li><a href="../main/main.do">상품 목록</a></li>
+          <li><a href="../goods/find.do">상품 검색</a></li>
           <li><a href="#">????????</a></li>
         </ul>
       </li>

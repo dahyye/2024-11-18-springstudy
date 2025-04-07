@@ -17,4 +17,5 @@ public interface RecipeService {
 	public int recipeFindTotalPage(Map map);
 	public List<ChefVO> chefListData(Map map);
 	public int chefTotalPage();
+	
 }

@@ -38,8 +38,8 @@ public class RecipeController {
 		model.addAttribute("ilist",ilist);
 		
 		model.addAttribute("vo",vo);
-		model.addAttribute("main_jsp", "../recipe/detail2");
-		System.out.println("######################jsp를 안넘겼어#########################");
+		model.addAttribute("main_jsp", "../recipe/detail.jsp");
+		//System.out.println("######################jsp를 안넘겼어#########################");
 		return "main/main";
 
 	}
@@ -69,7 +69,7 @@ public class RecipeController {
 		model.addAttribute("endPage",endPage);
 		model.addAttribute("fd",fd);
 		model.addAttribute("main_jsp","../recipe/find.jsp");
-		return "../main/main";
+		return "main/main";
 	}
 	
 	@GetMapping("recipe/chef_list.do")
