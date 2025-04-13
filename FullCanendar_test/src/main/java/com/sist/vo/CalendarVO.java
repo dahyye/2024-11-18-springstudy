@@ -1,5 +1,8 @@
 package com.sist.vo;
 
+import lombok.Data;
+
+@Data
 public class CalendarVO {
 	private int calendarNo;
 	private String calendarTitle;

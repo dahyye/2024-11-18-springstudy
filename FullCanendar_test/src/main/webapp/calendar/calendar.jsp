@@ -1,5 +1,9 @@
+<%@page import="io.opentelemetry.exporter.logging.SystemOutLogRecordExporter"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>    
+<%@page import="java.util.*"%>
+<%@page import="com.sist.vo.*"%>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,10 +29,21 @@
 		 droppable:true,
 		 editable:true,
 		 events:[
-			 {title:'기간설정',start:'2025-04-09',end:'2025-04-11', backgroundColor: '#ff0000'}, //기간일정
-			 {title:'시간포함',start:'2025-04-13T14:00:00',allDays:false}, //시간 포함 일정
-			 {title:'외부링크연결',start:'2025-04-03',url:'https://www.naver.com/'},
-		 ]
+			 <%List<CalendarVO> list = (List<CalendarVO>)request.getAttribute("list");%>
+	            <% System.out.println(list); %>
+	            <%if (list != null) 
+	            {%>
+	            	<%for (CalendarVO vo : list)
+	            	{%>
+			 			{
+							 title : '<%=vo.getCalendarTitle()  %>',
+							 start:'<%=vo.getCalendarStart()%>',
+							 end: '<%=vo.getCalendarEnd()%>',
+							 Color: '#' + Math.round(Math.random() * 0xffffff).toString(16)
+						 },
+			 		<%}
+	       		 }%>
+				 ]
 		 
 	 });
 	 calendar.render();
