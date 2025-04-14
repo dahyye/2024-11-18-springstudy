@@ -17,4 +17,9 @@ public class CalendarDAO {
 	{
 		return mapper.calendarList();
 	}
+	
+	public void calendarInsert(CalendarVO vo)
+	{
+		mapper.calendarInsert(vo);
+	}
 }

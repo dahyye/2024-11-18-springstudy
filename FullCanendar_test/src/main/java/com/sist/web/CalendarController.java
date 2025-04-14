@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -21,4 +22,13 @@ public class CalendarController {
 		model.addAttribute("list",list);
 		return "calendar/calendar";
 	}
+	
+	@GetMapping("calendar/insert.do")
+	public String calendar_insert(CalendarVO vo)
+	{
+		dao.calendarInsert(vo);
+		return "redirect:calendar/calendar.do";
+	}
+	
+	
 }
