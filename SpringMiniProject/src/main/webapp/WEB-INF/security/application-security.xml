@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/security/oauth2 https://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+		<!-- sequrity버전을 지워줘야함 -->
+
+	
+	<context:component-scan base-package="com.sist.*"/>
+	<!-- 
+		페이지별 접근 권한 지정 
+		hasRole('ROLE_ADMIN') ('ROLE_USER')
+		permitAll
+		hasAnyRole('','')
+	-->
+	<http auto-config="true" use-expressions="true">
+	 <csrf disabled="true"/> <!-- 해킹 방지 : 사이트 위조 방지(파밍) -->
+	 <!-- 사용자의 의도와 관계 없이 행해지는 공격기법 -->
+	 <intercept-url pattern="/member/**" access="permitAll"/> <!-- 모두 접근 가능 -->
+	 <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+	 <intercept-url pattern="/**" access="permitAll"/>
+	 <intercept-url pattern="/member/login.do" access="permitAll"/>
+	 <!-- login처리 -->
+	 <form-login login-page="/member/login.do"
+	 	login-processing-url="/member/login.do" 
+	 	username-parameter="userid"
+	 	password-parameter="userpwd"
+	 	always-use-default-target="false"
+	 	authentication-failure-handler-ref="loginFailureHandler"
+	 	authentication-success-handler-ref="loginSuccessHandler"
+	 />
+	 <!-- 
+	 <form-login login-page="/member/login.do"
+	 	login-processing-url="/member/login.do"  평소 사용하던 login_ok에 해당하는 부분 
+	 	username-parameter="userid"
+	 	password-parameter="userpwd"
+	 	always-use-default-target="false" 지정한 페이지로 넘어갈건지
+	 	authentication-failure-handler-ref="loginFailuserHandler"  아이디나 비밀번호가 틀렸을 경우 / 우리가 클래스를 만들어야 해
+	 	authentication-success-handler-ref="loginSuccessHandler"
+	 />
+	  -->
+	  <!-- 자동 로그인 : cookie                  토큰을 유지하는 시간(60초*60분*24시간->1일)  -->
+	 <remember-me data-source-ref="ds" token-validity-seconds="86400"/>
+	 <!-- 로그아웃-->
+	 <logout
+	 	logout-url="/member/logout.do"
+	 	invalidate-session="true"
+		logout-success-url="/main/main.do"
+		delete-cookies="remember-me,JSESSIONID"
+	 />
+	 <!-- 
+	 <logout
+	 	logout-url="/member/logout.do"
+	 	invalidate-session="true"  session.invalidate() 과 같은 세션에 있는 모든 데이터 지우는 부분
+	 									보안은 session기반
+		logout-success-url="/main/main.do"  return "redirect:../main/main.do"
+		delete-cookies="remember-me,JSESSIONID" 2개를 지워줘야 자동로그인해제
+		
+	 />
+	  -->
+	 
+	</http>
+	<beans:bean id="loginSuccessHandler"
+		class="com.sist.security.LoginSuccessHandler"
+	>
+	<beans:property name="defaultUrl" value="/main/main.do"/> <!-- name=LoginSuccessHandler클래스가 가지고 있는 변수 value=리턴이라고 생각하면됨-->
+	</beans:bean>
+	<beans:bean id="loginFailuserHandler"
+		class="com.sist.security.LoginFailuserHandler"
+	>
+	<beans:property name="defaultFailureUrl" value="/member/login.do?login_error"></beans:property>
+	</beans:bean>
+	
+	<!-- 데이터베이스 연결 후 데이터 읽기 : session-->
+	<jdbc-user-service data-source-ref="ds"
+	 users-by-username-query="SELECT userid as username, userpwd as password, enable FROM projectMember WHERE userid=?"
+	 authorities-by-username-query="SELECT userid as username, authority FROM authority WHERE userid=?"
+	/>
+	<authentication-manager>
+	 <authentication-provider user-service-ref="userService">
+	  <password-encoder ref="bcrptEncoder"/>
+	 </authentication-provider>
+	</authentication-manager>
+	<!-- 인증관리자에 전송 : 비밀번호 암호화 -->
+	<beans:bean
+		id="bcryptEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"
+	/>
+</beans:beans>

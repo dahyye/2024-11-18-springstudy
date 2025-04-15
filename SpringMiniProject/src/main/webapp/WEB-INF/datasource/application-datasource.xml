@@ -9,6 +9,38 @@
 		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
-
+	 <util:properties id="db" location="/WEB-INF/datasource/db.properties"/>
+	 <!-- 데이터베이스 정보 수집 : BasicDataSource -->
+    <bean  id="ds" class="org.apache.commons.dbcp.BasicDataSource"
+       p:driverClassName="#{db['driver']}"
+       p:url="#{db['url']}"
+       p:username="#{db['username']}"
+       p:password="#{db['password']}"
+    />
+    <!-- 
+       maxActive 8
+       maxIdle   8
+       maxWait   10000
+     -->
+    
+    <bean id="transactionManager"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+      p:dataSource-ref="ds"
+    />
+    <tx:annotation-driven/> <!-- 트랜잭션 사용할 때 -->
+    <!-- MyBatis로 전송 : SqlSessionFactoryBean -->
+    <bean 
+       id="ssf"
+       class="org.mybatis.spring.SqlSessionFactoryBean"
+       p:dataSource-ref="ds"
+       
+    />
+    <!-- SqlSessionFactoryBean을 이용해서 Mapper구현 
+         모든 Mapper를 한번에 처리 <mybatis-spring>
+         Mapper를 한개씩 처리 <bean..>
+     -->
+    <mybatis-spring:scan base-package="com.sist.mapper"
+      factory-ref="ssf"
+    />
 
 </beans>
