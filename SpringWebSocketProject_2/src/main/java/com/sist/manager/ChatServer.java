@@ -61,7 +61,7 @@ public class ChatServer {
    {
 	   Iterator<Session> it = users.keySet().iterator();
 	   while(it.hasNext())
-	   {
+	   { 
 		   Session ss=it.next();
 		   MemberVO vo = users.get(session);
 		   if(ss.getId()!=session.getId())
