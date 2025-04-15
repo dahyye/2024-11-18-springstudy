@@ -23,7 +23,7 @@ public class CalendarController {
 		return "calendar/calendar";
 	}
 	
-	@GetMapping("calendar/insert.do")
+	@PostMapping("calendar/insert.do")
 	public String calendar_insert(CalendarVO vo)
 	{
 		dao.calendarInsert(vo);

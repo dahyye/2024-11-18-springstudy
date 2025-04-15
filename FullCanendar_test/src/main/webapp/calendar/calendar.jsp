@@ -74,10 +74,12 @@
 </div>
 </body>
 <script>
+let Alldata = {};
  document.addEventListener('DOMContentLoaded',function(){
 	 var calendarEl = document.getElementById('calendar');
 	 var calendar = new FullCalendar.Calendar(calendarEl, {
 		 initialView:'dayGridMonth', 
+		 expandRows: true, //화면에 맞게 높이 재설정
 		 locale:'ko',
 		 headerToolbar:{
 			 /*
@@ -90,11 +92,53 @@
 		     right: 'dayGridMonth,timeGridWeek,timeGridDay'
 			 
 		 },
-		 selectable:true, //달력 셀 선택 활성화
+		 eventAdd: function(obj) { // 이벤트가 추가되면 발생하는 이벤트
+             
+         	sDate = 
+                 obj.event._instance.range["start"].getFullYear() + 
+                 '-'+(obj.event._instance.range["start"].getMonth() +1) +
+                 '-' +  obj.event._instance.range["start"].getDate();
+         	
+         	eDate =
+         		  obj.event._instance.range["end"].getFullYear() + 
+                   '-'+(obj.event._instance.range["end"].getMonth() +1) +
+                   '-' +  (obj.event._instance.range["end"].getDate() -1);
+         	
+         	 Alldata = {
+                 "start": sDate,
+                 "end": eDate,
+                 "title": obj.event._def["title"],
+                 "allday": obj.event._def["allDay"],
+                 "defId": obj.event._instance["defId"],
+                 "instanceId": obj.event._instance["instanceId"]
+             };
+
+             let allEvent = calendar.getEvents();
+             console.log(allEvent);
+
+              let jsondata = JSON.stringify(Alldata);
+              console.log("jsondata : " + jsondata);
+
+              
+         },
+		 selectable:true, // 달력 일자 드래그 설정가능    달력 셀 선택 활성화
+		 dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
 		 select: function(info) {	// 달력 셀을 클릭할 때 모달 열기
 	            $('#addEventModal').modal('show'); 
 	            $('#start').val(info.startStr); 
 	            $('#end').val(info.endStr);
+	            let title = prompt('일정을 입력하세요');
+	            if(title){
+	            	calendar.addEvent({
+	            		title:title,
+	            		start:info.start,
+	            		end:info.end,
+	            		allDay:info.allDay
+	            	})
+	            }
+	            calendar.unselect()
+	            	
+	            		            	
 	        },
 		 droppable:true,
 		 editable:true,
@@ -116,8 +160,33 @@
 				 ]
 		 
 	 });
+	 //캘린더 렌더링
 	 calendar.render();
  });
+ 
+ function allSave() {
+ 	
+	console.log(allData); */
+	document.getElementById("submenu").style.display = "block";
+
+	 
+     $.ajax({
+         url: "calendar/insert.do",
+         type: "post",
+         data: {addEvent : JSON.stringify(Alldata)},
+
+		 success:function(data, textStatus, xhr){
+			 console.log(data);
+			 
+		 },
+		 error:function(xhr, status, error){
+			 console.log(error);
+		 }
+		
+		 
+
+     });
+}
 </script>
 
 </html>
