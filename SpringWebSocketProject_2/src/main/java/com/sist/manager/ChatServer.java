@@ -1,4 +1,5 @@
 package com.sist.manager;
+
 import javax.servlet.http.HttpSession;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -19,11 +20,16 @@ public class ChatServer {
    public void onOpen(Session session,EndpointConfig config)
    throws Exception
    {
+	   System.out.println("onOpen");
 	   MemberVO vo=new MemberVO();
 	   HttpSession hs=
 			   (HttpSession)config.getUserProperties()
 			             .get(HttpSession.class.getName());
+	   System.out.println("오류찾기"+HttpSession.class.getName());
 	   vo=(MemberVO)hs.getAttribute("vo");
+	   System.out.println("2"+vo);
+	   vo.setSession(session);
+	   System.out.println(vo);
 	   System.out.println("1.접속:"+vo.getName());
 	   // 접속자 목록에 저장 
 	   users.put(session, vo);
@@ -46,12 +52,12 @@ public class ChatServer {
    public void onMessage(String message,Session session)
    throws Exception
    {
-	   System.out.println("수진메시지 : "+message+"===보낸사람:"+users.get(session).getName());
-	   Iterator<Session> it = users.keySet().iterator();
+	   System.out.println("수신 메세지:"+message+"===보낸사람:"+users.get(session).getName());
+	   Iterator<Session> it=users.keySet().iterator();
 	   while(it.hasNext())
 	   {
-		   Session ss=it.next(); //접속한 모든 사람 한 명씩 정보 가져오기
-		   MemberVO vo = users.get(session); //session은 본인정보
+		   Session ss=it.next();
+		   MemberVO vo=users.get(session);
 		   ss.getBasicRemote().sendText("msg:["+vo.getName()+"]"+message);
 	   }
    }
@@ -59,18 +65,18 @@ public class ChatServer {
    @OnClose
    public void onClose(Session session)throws Exception
    {
-	   Iterator<Session> it = users.keySet().iterator();
+	   Iterator<Session> it=users.keySet().iterator();
 	   while(it.hasNext())
-	   { 
+	   {
 		   Session ss=it.next();
-		   MemberVO vo = users.get(session);
+		   MemberVO vo=users.get(session);
+		   
 		   if(ss.getId()!=session.getId())
 		   {
 			   ss.getBasicRemote().sendText("msg:[알림 ☞]"+vo.getName()+"님이 퇴장하셨습니다");
 		   }
 	   }
-	   System.out.println("클라이언트 퇴장:"+users.get(session).getName()+","
-			   +session.getId());
+	   System.out.println("클라이언트 퇴장:"+users.get(session).getName());
 	   users.remove(session);
    }
 }

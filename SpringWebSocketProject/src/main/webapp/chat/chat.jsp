@@ -19,7 +19,7 @@ h3{
   text-align: center;
 }
 #chatArea{
-  width: 400px;
+  width: 400px; 
   height: 280px;
   overflow-y:auto;
   border:1px solid black;

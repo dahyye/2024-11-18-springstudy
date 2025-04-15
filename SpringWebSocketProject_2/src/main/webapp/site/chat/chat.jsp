@@ -45,28 +45,20 @@ function onOpen(event)
 // 채팅 메세지가 들어 온 경우
 function onMessage(event)
 {
-	//스프링에서 보내준 데이터를 받는다
-	let data=event.data //채팅 메세지를 가지고 온다
+	// 스프링에서 보내준 데이터를 받는다 
+	let data=event.data // 채팅 메세지를 가지고 온다 
 	/*
-		채팅 문자열 => 'msg'
-		채팅방 만들기 => 'makeroom'
-		일대일 채팅 => 'mantoman'
-	
+	     채팅 문장열 => 'msg' 
+	     채팅방 만들기 => 'makeroom'
+	     일대일 채팅 => 'mantoman'
 	*/
-	
 	if(data.substring(0,4)==='msg:')
 	{
-		appendMessage(data.substring(4))	
+		$('#recvMsg').append(data.substring(4)+"<br>")
 	}
-}
-//채팅방에 메시지 띄우는 함수
-function appendMessage(msg)
-{
-	$('#recvMsg').append(msg+"<br>") //문자열추가
-	let ch=$('#chatArea').height() //범위를 벗어나면 스크롤바 띄우기 위해서
-	let m=$('#recvMsg').height()-ch //채팅창이 가득 찼다
-	$('#chatArea').scrollTop(m)
-	
+	 let ch=$('#chatArea').height()
+	 let m=$('#recvMsg').height()-ch
+	 $('#chatArea').scrollTop(m)
 }
 
 // 종료 
@@ -87,7 +79,6 @@ function send(){
 	}
 	websocket.send(msg)
 	$('#sendMsg').val("")
-	
 }
 $(function(){
 	$('#startBtn').click(function(){
@@ -109,11 +100,6 @@ $(function(){
 <body>
   <div class="container">
     
-    <div class="row" id="logApp">
-     <div class="text-right">
-     
-     </div>
-    </div>
     <div class="row">
      <h3>Spring WebSocket 채팅</h3>
      <table class="table">
