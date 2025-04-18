@@ -79,7 +79,8 @@ let Alldata = {};
 	 var calendarEl = document.getElementById('calendar');
 	 var calendar = new FullCalendar.Calendar(calendarEl, {
 		 initialView:'dayGridMonth', 
-		 expandRows: true, //화면에 맞게 높이 재설정
+		 //expandRows: true, //화면에 맞게 높이 재설정
+		 height:500,
 		 locale:'ko',
 		 headerToolbar:{
 			 /*
@@ -166,7 +167,7 @@ let Alldata = {};
  
  function allSave() {
  	
-	console.log(allData); */
+	console.log(allData); 
 	document.getElementById("submenu").style.display = "block";
 
 	 

@@ -14,7 +14,7 @@ import com.sist.vo.*;
 
 import lombok.Setter;
 
-public class LoginFailuserHandler implements AuthenticationFailureHandler{
+public class LoginFailureHandler implements AuthenticationFailureHandler{
 	
 	@Setter
 	private String defaultFailureUrl;

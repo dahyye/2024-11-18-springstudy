@@ -5,11 +5,10 @@
 	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/security/oauth2 https://www.springframework.org/schema/security/spring-security-oauth2.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-		<!-- sequrity버전을 지워줘야함 -->
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	
 	<context:component-scan base-package="com.sist.*"/>
@@ -22,10 +21,10 @@
 	<http auto-config="true" use-expressions="true">
 	 <csrf disabled="true"/> <!-- 해킹 방지 : 사이트 위조 방지(파밍) -->
 	 <!-- 사용자의 의도와 관계 없이 행해지는 공격기법 -->
-	 <intercept-url pattern="/member/**" access="permitAll"/> <!-- 모두 접근 가능 -->
-	 <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
-	 <intercept-url pattern="/**" access="permitAll"/>
-	 <intercept-url pattern="/member/login.do" access="permitAll"/>
+	 <intercept-url pattern="/member/**" access="permitAll"/>
+     <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+     <intercept-url pattern="/**" access="permitAll"/>
+     <intercept-url pattern="/member/login.do" access="permitAll"/>
 	 <!-- login처리 -->
 	 <form-login login-page="/member/login.do"
 	 	login-processing-url="/member/login.do" 
@@ -33,7 +32,7 @@
 	 	password-parameter="userpwd"
 	 	always-use-default-target="false"
 	 	authentication-failure-handler-ref="loginFailureHandler"
-	 	authentication-success-handler-ref="loginSuccessHandler"
+         authentication-success-handler-ref="loginSuccessHandler"
 	 />
 	 <!-- 
 	 <form-login login-page="/member/login.do"
@@ -67,29 +66,30 @@
 	 
 	</http>
 	<beans:bean id="loginSuccessHandler"
-		class="com.sist.security.LoginSuccessHandler"
-	>
-	<beans:property name="defaultUrl" value="/main/main.do"/> <!-- name=LoginSuccessHandler클래스가 가지고 있는 변수 value=리턴이라고 생각하면됨-->
-	</beans:bean>
-	<beans:bean id="loginFailuserHandler"
-		class="com.sist.security.LoginFailuserHandler"
-	>
-	<beans:property name="defaultFailureUrl" value="/member/login.do?login_error"></beans:property>
-	</beans:bean>
+       class="com.sist.security.LoginSuccessHandler"
+     >
+       <beans:property name="defaultUrl" value="../main/main.do"/>
+     </beans:bean>
+     <beans:bean id="loginFailureHandler"
+       class="com.sist.security.LoginFailureHandler"
+     >
+       <beans:property name="defaultFailureUrl" value="/member/login.do?login_error"/>
+     </beans:bean>
 	
 	<!-- 데이터베이스 연결 후 데이터 읽기 : session-->
 	<jdbc-user-service data-source-ref="ds"
+	 id="userService"
 	 users-by-username-query="SELECT userid as username, userpwd as password, enable FROM projectMember WHERE userid=?"
 	 authorities-by-username-query="SELECT userid as username, authority FROM authority WHERE userid=?"
 	/>
+	<!-- 인증관리자에 전송 : 비밀번호 암호화  -->
 	<authentication-manager>
-	 <authentication-provider user-service-ref="userService">
-	  <password-encoder ref="bcrptEncoder"/>
-	 </authentication-provider>
-	</authentication-manager>
-	<!-- 인증관리자에 전송 : 비밀번호 암호화 -->
-	<beans:bean
-		id="bcryptEncoder"
-		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"
-	/>
+       <authentication-provider user-service-ref="userService">
+         <password-encoder ref="bcryptEncoder"/>
+       </authentication-provider>
+     </authentication-manager>
+     <beans:bean
+       id="bcryptEncoder"
+       class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"
+     />
 </beans:beans>

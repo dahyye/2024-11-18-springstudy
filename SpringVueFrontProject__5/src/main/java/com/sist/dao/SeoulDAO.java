@@ -17,7 +17,11 @@ import org.springframework.stereotype.Repository;
 
  */
 @Repository
-public class SeoulDAO {
+public class 
+
+
+
+DAO {
 
 	@Autowired
 	private SeoulMapper mapper;
