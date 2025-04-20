@@ -16,7 +16,7 @@ import lombok.Data;
 
 @Data
 public class BoardVO {
-	private int feedno, groupno,filecount;
+	private int feed_no, group_no,filecount;
 	private String user_id,title,content,dbday;
 	private Date regdate, update_time;
 }

@@ -8,8 +8,8 @@ import com.sist.vo.*;
 public class BoardController {
 	
 	@GetMapping("board/list.do")
-	public String board_list(int groupid)
+	public String board_list()
 	{
-		return "board/list";
+		return "board/reddit";
 	}
 }

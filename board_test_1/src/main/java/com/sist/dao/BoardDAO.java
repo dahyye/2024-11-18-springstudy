@@ -15,9 +15,13 @@ public class BoardDAO {
 	/*
 	 public List<BoardVO> boardListData(int groupno);
 	 */
-	public List<BoardVO> boardListData(int groupno)
+	public List<BoardVO> boardListData(int group_no)
 	{
-		return mapper.boardListData(groupno);
+		return mapper.boardListData(group_no);
 	}
 	
+	public void boardInsertData(BoardVO vo)
+	{
+		mapper.boardInsertData(vo);
+	}
 }
