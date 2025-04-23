@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.vo.*;
 import com.sist.dao.*;
@@ -18,6 +19,25 @@ import com.sist.dao.*;
 public class BoardRestController {
 	@Autowired 
 	private BoardDAO dao;
+	
+	@GetMapping("board/group_vue.do")
+	public ResponseEntity<Map> group_list_vue()
+	{
+		System.out.println("group_vue");
+		Map map = new HashedMap();
+		try {
+			List<GroupVO> list = dao.groupListData();
+			map.put("list", list);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			System.out.println("======== error ========");
+			return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		System.out.println("group_vue ì™„ë£Œ");
+		return new ResponseEntity<>(map,HttpStatus.OK);
+	}
 	
 	@GetMapping("board/feed_vue.do")
 	public ResponseEntity<Map> board_list_vue(int group_no)
@@ -32,10 +52,10 @@ public class BoardRestController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			System.out.println("======== ¿À·ù¹ß»ı ========");
+			System.out.println("======== error ========");
 			return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		System.out.println("feed_vueµ¥ÀÌÅÍ Àü¼Û¿Ï·á");
+		System.out.println("feed_vue ì™„ë£Œ");
 		return new ResponseEntity<>(map,HttpStatus.OK);
 	}
 	
@@ -45,9 +65,11 @@ public class BoardRestController {
 		String result="";
 		try {
 			System.out.println(vo);
-	
+			List<MultipartFile> list = vo.getFiles();
+			System.out.println("ì „ì†¡ëœ íŒŒì¼ ìˆ˜: "+list.size());
+			//String path:"c:\\download\\";
 			vo.setGroup_no(1);
-			vo.setUser_id("È«±æµ¿");
+			vo.setUser_id("hong");
 		
 			dao.boardInsertData(vo);
 			result="ok";

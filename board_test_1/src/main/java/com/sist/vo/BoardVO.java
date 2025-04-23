@@ -12,6 +12,8 @@ UPDATE_TIME          DATE
 
  */
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 @Data
@@ -19,4 +21,5 @@ public class BoardVO {
 	private int feed_no, group_no,filecount;
 	private String user_id,title,content,dbday;
 	private Date regdate, update_time;
+	private List<MultipartFile> files= new ArrayList<MultipartFile>();
 }

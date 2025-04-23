@@ -2,6 +2,8 @@ package com.sist.dao;
 
 import java.util.*;
 
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -23,5 +25,20 @@ public class BoardDAO {
 	public void boardInsertData(BoardVO vo)
 	{
 		mapper.boardInsertData(vo);
+	}
+	
+	public List<GroupVO> groupListData()
+	{
+		return mapper.groupListData();
+	}
+	
+	public void boardFileInsert(FeedFileInfoVO vo)
+	{
+		mapper.boardFileInsert(vo);
+	}
+	   
+	public List<FeedFileInfoVO> fileListData(int no)
+	{
+		return mapper.fileListData(no);
 	}
 }
