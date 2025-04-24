@@ -1,5 +1,6 @@
 package com.sist.web;
 
+import java.io.File;
 import java.util.*;
 
 import org.apache.commons.collections.map.HashedMap;
@@ -67,11 +68,43 @@ public class BoardRestController {
 			System.out.println(vo);
 			List<MultipartFile> list = vo.getFiles();
 			System.out.println("전송된 파일 수: "+list.size());
-			//String path:"c:\\download\\";
+			System.out.println(list);
+			String path="c:\\download\\";
+			try {
+				if(list.size()==0)
+				{
+					vo.setFilecount(0);
+				}
+				else
+				{
+					vo.setFilecount(list.size());
+				}
+				int no=dao.boardInsertData(vo);
+				System.out.println("입력된 새글의 번호"+no);
+				
+				FeedFileInfoVO fvo = new FeedFileInfoVO();
+				if(list.size()>0)
+				{
+					for(MultipartFile mf:list)
+					{
+						String filename=mf.getOriginalFilename();
+						File file=new File(path+filename);
+						mf.transferTo(file); //업로드
+						
+						fvo.setFilename(filename);
+						fvo.setFilesize(file.length());
+						fvo.setNo(no);
+						
+						dao.boardFileInsert(fvo); 
+					}
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
 			vo.setGroup_no(1);
 			vo.setUser_id("hong");
-		
-			dao.boardInsertData(vo);
 			result="ok";
 		} catch (Exception e) {
 			// TODO: handle exception

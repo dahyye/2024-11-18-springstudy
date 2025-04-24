@@ -21,11 +21,11 @@ public interface BoardMapper {
 			+ "WHERE group_no=#{group_no}")
 	public List<BoardVO> boardListData(int group_no);
 	
-	@Insert("INSERT INTO p_board VALUES(p_feedno_seq.nextval,#{group_no},#{user_id},#{title},#{content},1,SYSDATE,SYSDATE)")
+	@Insert("INSERT INTO p_board VALUES(p_feedno_seq.nextval,#{group_no},#{user_id},#{title},#{content},#{filecount},SYSDATE,SYSDATE)")
 	public void boardInsertData(BoardVO vo);
 	
-	
-	
+	@Select("SELECT p_feedno_seq.currval FROM DUAL")
+	public int boardCurentNodata();
 	
 	@Insert("INSERT INTO p_fileInf VALUES(#{fno},#{filename},#{filesize})")
 	public void boardFileInsert(FeedFileInfoVO vo);

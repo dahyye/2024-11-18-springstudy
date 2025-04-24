@@ -165,40 +165,31 @@ body {
 
 							<div class="modal-body">
 								<form @submit.prevent="addPost">
-									<div class="form-group">
-										<label for="title">제목</label> <input type="text" id="title"
-											class="form-control" v-model="newPost.title" required>
-										<!--   -->
-									</div>
-
-									<div class="form-group">
-										<label for="content">내용</label>
-										<textarea id="content" class="form-control" rows="4"
-											v-model="newPost.content" required></textarea>
-										<!--  -->
-									</div>
-
-									<!--  <div class="form-group">
-            <label for="images">이미지 URL</label>
-            <input type="file" multiple="multiple" id="images" class="form-control" v-model="newPost.imageInput"> 
-          </div> -->
+									<div class="mb-3">
+									    <label class="form-label">제목</label>
+									    <input type="text" class="form-control" v-model="newPost.title" required>
+									  </div>
 									
-									<div class="form-group">
-										<li class="show">
-										<label for="upload">이미지선택</label> 
-										<input
-											type="file" multiple name="upload" id="upload"
-											class="form-control" v-model="newPost.files"
-											accept="image/*">
-										</li>
-									</div>
-
-									<div id=imagePreviews">
-										<ul id = "forUpload-ul" style = "display : none;">사진출력부분</ul>
-									</div>
-
-									<button type="submit" class="btn btn-success">게시하기</button>
-								</form>
+									  <div class="mb-3">
+									    <label class="form-label">내용</label>
+									    <textarea class="form-control" rows="4" v-model="newPost.content" required></textarea>
+									  </div>
+									
+									<!-- 파일 선택 -->
+									<div class="mb-3">
+									    <label class="form-label">이미지 첨부</label>
+									    <input type="file" multiple @change="handleFileChange" accept="image/*" />
+									  </div>
+										
+									<!-- 미리보기부분 -->
+									<div class="row">
+									    <div class="col-xs-3" v-for="(preview, index) in imagePreviews" :key="index">
+									      <img :src="preview" class="img-thumbnail img-fluid" style="max-height: 120px;">
+									    </div>
+									  </div>
+									
+									  <button type="submit" class="btn btn-primary mt-3">게시하기</button>
+									</form>
 							</div>
 
 						</div>
@@ -256,11 +247,13 @@ body {
       return {
          list:[],
 		 group_no:1,
+		 
 		 newPost: {
          			title: '',
          			content: '',
-         			imageInput: ''
       			   },
+		 selectedFiles: [],
+    	 imagePreviews: []
 		 
       }
     },
@@ -269,10 +262,12 @@ body {
 	},
     methods:{
 		addPost() {
+		    console.log("등록하는 파일들"+this.newPost.files)
 			const res = axios.post('../board/feed_insert.do',{
 					title : this.newPost.title,
 					content : this.newPost.content,
-					images : this.newPost.imageInput
+					files : this.newPost.files
+
 			}).then(response=> {
 				console.log("데이터 등록 성공")
 				

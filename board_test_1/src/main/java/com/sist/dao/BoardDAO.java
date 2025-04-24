@@ -22,9 +22,10 @@ public class BoardDAO {
 		return mapper.boardListData(group_no);
 	}
 	
-	public void boardInsertData(BoardVO vo)
+	public int boardInsertData(BoardVO vo)
 	{
 		mapper.boardInsertData(vo);
+		return mapper.boardCurentNodata();
 	}
 	
 	public List<GroupVO> groupListData()
