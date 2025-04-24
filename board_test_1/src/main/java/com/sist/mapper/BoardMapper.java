@@ -17,7 +17,7 @@ public interface BoardMapper {
 	@Select("SELECT feed_no,group_no,user_id,title,filecount,regdate, num "
 			+ "FROM (SELECT feed_no,group_no,user_id,title,filecount,regdate, rownum as num "
 			+ "FROM (SELECT feed_no,group_no,user_id,title,filecount,regdate "
-			+ "FROM p_board ORDER BY feed_no ASC)) "
+			+ "FROM p_board ORDER BY feed_no DESC)) "
 			+ "WHERE group_no=#{group_no}")
 	public List<BoardVO> boardListData(int group_no);
 	

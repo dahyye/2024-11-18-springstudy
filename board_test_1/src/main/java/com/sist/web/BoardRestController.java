@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,6 +49,23 @@ public class BoardRestController {
 		try {
 			List<BoardVO> list = dao.boardListData(group_no);
 			System.out.println(group_no);
+			
+			for(BoardVO vo : list)
+			{
+				List<FeedFileInfoVO> fvo = dao.fileListData(vo.getFeed_no());
+				List<String> filenames = new ArrayList<String>();
+				for(FeedFileInfoVO ffvo : fvo)
+				{
+					filenames.add(ffvo.getFilename());
+				}
+				vo.setImages(filenames);	
+				/*
+				List<String> filenames = fvo.stream()
+					    .map(FeedFileInfoVO::getFilename)
+					    .collect(Collectors.toList());
+				*/
+				//stream으로 하면 코드는 간편한데 아직 공부못한부분
+			}
 			map.put("list", list);
 			
 		} catch (Exception e) {
@@ -61,31 +79,36 @@ public class BoardRestController {
 	}
 	
 	@PostMapping("board/feed_insert.do")
-	public ResponseEntity<String> Board_list_vue(@RequestBody BoardVO vo)
+	public ResponseEntity<String> Board_list_vue(@RequestParam("title") String title,
+		    @RequestParam("content") String content,
+		    @RequestParam(value = "files", required = false) List<MultipartFile> files)
 	{
-		String result="";
+		String result = "";
+		BoardVO vo = new BoardVO();
 		try {
-			System.out.println(vo);
-			List<MultipartFile> list = vo.getFiles();
-			System.out.println("전송된 파일 수: "+list.size());
-			System.out.println(list);
+			System.out.println("입력된 title은 ="+title);
+			System.out.println("입력된 content은 ="+content);
+			System.out.println("입력된 files는 ="+files);
+			//System.out.println("vo데이터들은 ="+vo);
+			//List<MultipartFile> list = vo.getFiles();
+			//System.out.println("전송된 파일 수: "+list.size());
+			//System.out.println(list);
+			int fileCount = (files == null || files.isEmpty()) ? 0 : files.size();
+			vo.setTitle(title);
+	        vo.setContent(content);
+	        vo.setFilecount(fileCount);
+	        vo.setGroup_no(1);         // 추후 그룹번호 값으로 교체
+	        vo.setUser_id("hong");     // 추후 로그인 값으로 교체
 			String path="c:\\download\\";
 			try {
-				if(list.size()==0)
-				{
-					vo.setFilecount(0);
-				}
-				else
-				{
-					vo.setFilecount(list.size());
-				}
+				
 				int no=dao.boardInsertData(vo);
 				System.out.println("입력된 새글의 번호"+no);
 				
 				FeedFileInfoVO fvo = new FeedFileInfoVO();
-				if(list.size()>0)
+				if(files != null && !files.isEmpty())
 				{
-					for(MultipartFile mf:list)
+					for(MultipartFile mf:files)
 					{
 						String filename=mf.getOriginalFilename();
 						File file=new File(path+filename);
@@ -93,7 +116,7 @@ public class BoardRestController {
 						
 						fvo.setFilename(filename);
 						fvo.setFilesize(file.length());
-						fvo.setNo(no);
+						fvo.setFno(no);
 						
 						dao.boardFileInsert(fvo); 
 					}
@@ -103,8 +126,7 @@ public class BoardRestController {
 				// TODO: handle exception
 				e.printStackTrace();
 			}
-			vo.setGroup_no(1);
-			vo.setUser_id("hong");
+			
 			result="ok";
 		} catch (Exception e) {
 			// TODO: handle exception

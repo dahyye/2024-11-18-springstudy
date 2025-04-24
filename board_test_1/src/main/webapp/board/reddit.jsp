@@ -8,6 +8,8 @@
 <title>Reddit 스타일 게시글 + 큰 이미지 슬라이드</title>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script
@@ -218,7 +220,11 @@ body {
             <span class="glyphicon glyphicon-chevron-right"></span>
           </a>
         </div> -->
-
+					<div class="row g-2 mt-2" v-if="vo.images && vo.images.length">
+					  <div class="col-6 col-md-4 col-lg-3" v-for="(img, imgIdx) in vo.images" :key="imgIdx">
+					    <img :src="'/images/' + img" class="img-fluid rounded border" style="height: 200px; object-fit: cover;">
+					  </div>
+					</div>
 					<div class="post-body" style="margin-top: 10px;">{{
 						vo.content }}</div>
 
@@ -261,8 +267,46 @@ body {
 		this.dataRecv()
 	},
     methods:{
+		handleFileChange(event) {
+  		  const files = Array.from(event.target.files);
+  		  this.selectedFiles = files;
+  		  this.imagePreviews = [];
+
+  		  files.forEach(file => {
+   		   const reader = new FileReader();
+  	 	   reader.onload = (e) => {
+   		     this.imagePreviews.push(e.target.result);
+   		   };
+   		   reader.readAsDataURL(file);
+   		 	});
+ 		 },
+
+		resetForm() {
+	    this.newPost.title = '';
+  		this.newPost.content = '';
+   	 	this.selectedFiles = [];
+   	 	this.imagePreviews = [];
+  		},
 		addPost() {
-		    console.log("등록하는 파일들"+this.newPost.files)
+			const formData = new FormData();
+ 			formData.append('title', this.newPost.title);
+  			formData.append('content', this.newPost.content);
+  			this.selectedFiles.forEach(file => {
+    			formData.append('files', file);
+  			});
+
+  			axios.post('../board/feed_insert.do', formData, {
+    			headers: {
+      			'Content-Type': 'multipart/form-data'
+    			}
+  			}).then(response => {
+    			alert("게시글이 등록되었습니다!");
+    			this.resetForm();
+    			this.dataRecv();
+  			});		    
+
+			/*
+			console.log("등록하는 파일들"+this.newPost.files)
 			const res = axios.post('../board/feed_insert.do',{
 					title : this.newPost.title,
 					content : this.newPost.content,
@@ -272,7 +316,7 @@ body {
 				console.log("데이터 등록 성공")
 				
 			})
-			
+			*/
 			
 		},
 		async dataRecv(){
@@ -283,7 +327,7 @@ body {
 							group_no:this.group_no
 					}
 			})
-            this.list=res.data.list 
+            this.list=res.data.list
 			console.log(res)
 		}
 
@@ -292,7 +336,8 @@ body {
 </script>
 	
 </body>
-<script type="text/javascript">
+
+<!-- <script type="text/javascript">
 		let curImageCount = 0; //현재 들어온 이미지 수
 		/*
 			"file" multiple은 여러개 파일을 받을 순 있는데 
@@ -390,5 +435,6 @@ body {
 				}
 			}
 		});
-	</script>
+	</script> -->
+	
 </html>

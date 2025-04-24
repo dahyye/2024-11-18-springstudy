@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class FeedFileInfoVO {
-   private int no;
+   private int fno;
    private String filename;
    private long filesize;
 }

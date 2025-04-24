@@ -22,4 +22,5 @@ public class BoardVO {
 	private String user_id,title,content,dbday;
 	private Date regdate, update_time;
 	private List<MultipartFile> files= new ArrayList<MultipartFile>();
+	private List<String> images = new ArrayList<>();
 }
